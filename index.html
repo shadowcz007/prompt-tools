@@ -1,270 +1,332 @@
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prompt-tools</title>
-  <style>
-    body{
-      margin: 0;
-      padding: 0
-    }
-    button,input{
-      border: none;
-      border-radius: 4px;
-      outline: none;
-      line-height: 24px;
-      padding: 2px 14px;
-      margin:4px;
-      cursor: pointer;
-    }
-    header{
-      position: fixed;
-    left: 0;
-    display: flex;
-    padding: 8px 24px;
-    justify-content: flex-start;
-    background-color: white;
-    width: calc(100% - 48px);
-    }
-    main{
-      padding: 56px 24px;
-    }
-    #input-my-prompt-keywords{
-      width: 720px;
-      background-color: #eee;
-      min-height:50vh;
-      padding: 12px;
-      background-color: rgb(30, 30, 30);
-      outline: none;
-      border: none;
-      color:#ce9178;
-      font-family: Menlo, Monaco, "Courier New", monospace;
-    font-size: 12px;
-    line-height: 18px;
-    white-space: pre;
-    }
-     
-  </style>
-</head>
-<body>
-  
-  <header>
-    <button id="new-my-prompt-keywords-btn">新建</button>
-    <button id="create-my-prompt-keywords-btn">生成</button>
-
-  </header>
-  <main>
-
-    <div id="input-my-prompt-keywords" contenteditable>
-      
-#
-shot_type
-Close-up 
-Extreme Close-up 
-POV
-Medium shot
-Long shot
-Product Shot
-#
-style
-    polaroid
-    Monochrome
-    Long exposure 
-    
-    Color splash 
-    Tilt-shift 
-    Google earth satellite 
-
-#
-main
-photo of a duckduck roast_duck
-
-#
-
-cos_play
-        Superhero Warrior
-        Wizard
-        Vampire
-        Witch
-        Alien
-        Robot
-        Pirate
-        Knight
-        Ninja
-        Detective
-        Scientist
-        Sorcerer
-        Cyborg
-        Zombie
-        Monster
-        Barbarian
-        Elf
-        Fairy
-        Alchemist
-        Superman 
-        Batman 
-        Spider-Man 
-        Iron Man 
-        Wonder Woman 
-        Captain America 
-        Thor 
-        The Hulk 
-        Black Panther 
-        Aquaman
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt-tools</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0
+        }
         
+        button,
+        input {
+            border: none;
+            border-radius: 4px;
+            outline: none;
+            line-height: 24px;
+            padding: 2px 14px;
+            margin: 4px;
+            cursor: pointer;
+        }
+        
+        header {
+            position: fixed;
+            left: 0;
+            display: flex;
+            padding: 8px 24px;
+            justify-content: flex-start;
+            background-color: white;
+            width: calc(100% - 48px);
+        }
+        
+        main {
+            padding: 56px 24px;
+        }
+        
+        #input-my-prompt-keywords {
+            width: 720px;
+            background-color: #eee;
+            min-height: 50vh;
+            padding: 12px;
+            background-color: rgb(30, 30, 30);
+            outline: none;
+            border: none;
+            color: #ce9178;
+            font-family: Menlo, Monaco, "Courier New", monospace;
+            font-size: 12px;
+            line-height: 18px;
+            white-space: pre;
+        }
+    </style>
+</head>
 
-#
-action
-    walking
-    splashing water
-    running
-    reading a book
-    sitting
-    looking at photo album
-    looking at food 
-    driving a bicycle
-   
-#
-space
-    in the water
-    at the beach 
-    
-    on the beach 
-    Indoor 
-    In the park 
-    
-    Japanese city street
-    in window
-    futuristic park
-    in the forest
-    by the Vaporwave pool
-    underground city carpark 
-    driving in a town
-    in Tokyo at night
+<body>
 
-#
-lighting 
-    Soft 
-    Ambient
-    Ring
-    Sun
-    Cinematic
-    Purple Neon 
-    Nostalgic
-    Sun Rays
+    <header>
+        <button id="new-my-prompt-keywords-btn">新建</button>
+        <button id="create-my-prompt-keywords-btn">生成</button>
 
-#
-lens
-    exotic colorful pastel 
-    
-     ray traced lighting and reflections
-    romantic lighting
-    canon eos r3 
-    
-    Fish-eye 
-    Telephoto 
-    Macro
+    </header>
+    <main>
 
-#
-device
-    iPhone X
-    CCTV
-    Nikon Z FX
-    Canon
-    Gopro
+        <div id="input-my-prompt-keywords" contenteditable>
 
-#
-artists
-    Ruth Bernhard
-    Ansel Adams
-    Ray Earnes
-    Peter Kemp
-    Enki Bilal
-    Chesley Bonestell
-    Karel Thole
-    Jim Burns
+          #
+          shot_type
+          Close-up 
+          Extreme Close-up 
+          POV
+          Medium shot
+          Long shot
+          Product Shot
+          #
+          style
+              polaroid
+              Monochrome
+              Long exposure 
+              
+              Color splash 
+              Tilt-shift 
+              Google earth satellite 
+          
+          #
+          main
+          photo of a duckduck roast_duck
+          
+          #
+          
+          cos_play
+                  Superhero Warrior
+                  Wizard
+                  Vampire
+                  Witch
+                  Alien
+                  Robot
+                  Pirate
+                  Knight
+                  Ninja
+                  Detective
+                  Scientist
+                  Sorcerer
+                  Cyborg
+                  Zombie
+                  Monster
+                  Barbarian
+                  Elf
+                  Fairy
+                  Alchemist
+                  Superman 
+                  Batman 
+                  Spider-Man 
+                  Iron Man 
+                  Wonder Woman 
+                  Captain America 
+                  Thor 
+                  The Hulk 
+                  Black Panther 
+                  Aquaman
+                  
+          
+          #
+          action
+              walking
+              splashing water
+              running
+              reading a book
+              sitting
+              looking at photo album
+              looking at food 
+              driving a bicycle
+             
+          #
+          space
+              in the water
+              at the beach 
+              
+              on the beach 
+              Indoor 
+              In the park 
+              
+              Japanese city street
+              in window
+              futuristic park
+              in the forest
+              by the Vaporwave pool
+              underground city carpark 
+              driving in a town
+              in Tokyo at night
+          
+          #
+          lighting 
+              Soft 
+              Ambient
+              Ring
+              Sun
+              Cinematic
+              Purple Neon 
+              Nostalgic
+              Sun Rays
+          
+          #
+          lens
+              exotic colorful pastel 
+              
+               ray traced lighting and reflections
+              romantic lighting
+              canon eos r3 
+              
+              Fish-eye 
+              Telephoto 
+              Macro
+          
+          #
+          device
+              iPhone X
+              CCTV
+              Nikon Z FX
+              Canon
+              Gopro
+          
+          #
+          artists
+              Ruth Bernhard
+              Ansel Adams
+              Ray Earnes
+              Peter Kemp
+              Enki Bilal
+              Chesley Bonestell
+              Karel Thole
+              Jim Burns
+        </div>
+    </main>
+    <footer></footer>
 
-   
- 
-    </div>
-  </main>
-  <footer></footer>
+    <script>
+        String.prototype.init = function() {
+            return this.trim().toLowerCase()
+        }
+        Array.prototype.shuffle = function() {
+            return this.sort(() => Math.random() - 0.5)
+        }
 
-  <script>
+
+        function getNewImageByPrompt({
+            prompt,
+            data
+        }) {
+            return new Promise((res, rej) => {
+                fetch("http://127.0.0.1:7860/run/infer_text2img_for_auto", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            data: [
+                                prompt
+                            ]
+                        })
+                    })
+                    .then(r => r.json())
+                    .then(
+                        r => {
+                            let d = r.data;
+                            if (d) {
+                                for (let url of d) {
+                                    /* 确定是一张新图 */
+                                    if (!window._prompt_images_result[url]) {
+                                        // console.log('新图#', window.items.length);
+                                        window._prompt_images_result[url] = {
+                                            prompt,
+                                            data,
+                                            url
+                                        };
+                                        res(window._prompt_images_result[url]);
+                                    };
+                                    
+                                }
+                            }
+                            res();
+                        }
+                    )
+            })
+
+        }
+
+        var json = {};
+        window._prompt_images_result = {};
+
+        function init() {
+            let inputMyText = document.querySelector('#input-my-prompt-keywords'),
+                createMyPromptBtn = document.querySelector('#create-my-prompt-keywords-btn');
+
+            document.querySelector('#new-my-prompt-keywords-btn').addEventListener('click', e => {
+                inputMyText.innerText = '';
+                inputMyText.style.display = 'block';
+                createMyPromptBtn.style.display = 'block';
+                document.body.querySelector('.prompt-keywords').remove();
+            })
+            createMyPromptBtn.addEventListener('click', e => {
+                //console.log(e)
+                createMyPromptBtn.style.display = 'none';
+                inputMyText.style.display = 'none';
+                let text = inputMyText.innerText;
+                let texts = text.split('#');
+                texts = Array.from(texts, t => t.init()).filter(f => f);
+                json = {};
+                Array.from(texts, t => parsePrompt(t));
+                createGUI();
+            })
+        }
 
 
-    String.prototype.init = function () {
-      return this.trim().toLowerCase()
-    }
-    Array.prototype.shuffle = function () {
-      return this.sort(() => Math.random() - 0.5)
-    }
+        function dataURLtoBlob(dataurl) {
+            var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+                bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+            while (n--) {
+                u8arr[n] = bstr.charCodeAt(n);
+            }
+            return new Blob([u8arr], { type: mime });
+        }
 
-    var json = {};
-    
 
-    function init(){
-      let inputMyText=document.querySelector('#input-my-prompt-keywords'),
-    createMyPromptBtn=document.querySelector('#create-my-prompt-keywords-btn');
 
-      document.querySelector('#new-my-prompt-keywords-btn').addEventListener('click',e=>{
-        inputMyText.innerText='';
-        inputMyText.style.display='block';
-        createMyPromptBtn.style.display='block';
-        document.body.querySelector('.prompt-keywords').remove();
-      })
-      createMyPromptBtn.addEventListener('click',e=>{
-        //console.log(e)
-        createMyPromptBtn.style.display='none';
-        inputMyText.style.display='none';
-        let text=inputMyText.innerText;
-        let texts=text.split('#');
-        texts=Array.from(texts,t=>t.init()).filter(f=>f);
-        json = {};
-        Array.from(texts,t=> parsePrompt(t));
-        createGUI();
-      })
-    }
 
-    
-    //
-    const parseText = t => Array.from(t, s => s.init()).filter(f => f)
-    const parsePrompt = text => {
-      let res = parseText(text.split('\n'))
-      json[res[0]] = res.slice(1, res.length)
-    }
-    const get = (key, start, end) => {
-      let fixeds = window._prompt_fixeds
-      let keys = Object.keys(fixeds)
-      let res = {
-        value: keys.includes(key) ? fixeds[key] : randomGetIndex(json[key]),
-        key
-      }
-      if (start) res = { start, ...res }
-      if (end) res = { end, ...res }
-      //   console.log(json[key], key)
-      return encodeURIComponent(JSON.stringify(res))
-    }
-    
-    const randomGetIndex = keywords => {
-      return keywords[Math.ceil(Math.random() * keywords.length) - 1]
-    }
-    
-    // fixed 需固定的字段和值
-    // random 随机变换位置的字段
-    const createPrompts = (fixeds = {}, random = [], count = 10) => {
-      window._prompt_fixeds = {}
-      random = Array.from(random, r => r.init()).filter(f => f)
-    
-      for (let key in fixeds) {
-        window._prompt_fixeds[key.init()] = fixeds[key].init()
-      }
-    
-      let prompts = {}
-      Array.from(new Array(count * 2), a => {
-        let prompt = `${get('shot_type', 'a')},${get('style')},${get('main')},${get(
+        //
+        const parseText = t => Array.from(t, s => s.init()).filter(f => f)
+        const parsePrompt = text => {
+            let res = parseText(text.split('\n'))
+            json[res[0]] = res.slice(1, res.length)
+        }
+        const get = (key, start, end) => {
+            let fixeds = window._prompt_fixeds
+            let keys = Object.keys(fixeds)
+            let res = {
+                value: keys.includes(key) ? fixeds[key] : randomGetIndex(json[key]),
+                key
+            }
+            if (start) res = {
+                start,
+                ...res
+            }
+            if (end) res = {
+                    end,
+                    ...res
+                }
+                //   console.log(json[key], key)
+            return encodeURIComponent(JSON.stringify(res))
+        }
+
+        const randomGetIndex = keywords => {
+            return keywords[Math.ceil(Math.random() * keywords.length) - 1]
+        }
+
+        // fixed 需固定的字段和值
+        // random 随机变换位置的字段
+        const createPrompts = (fixeds = {}, random = [], count = 10) => {
+            window._prompt_fixeds = {}
+            random = Array.from(random, r => r.init()).filter(f => f)
+
+            for (let key in fixeds) {
+                window._prompt_fixeds[key.init()] = fixeds[key].init()
+            }
+
+            let prompts = {}
+            Array.from(new Array(count * 2), a => {
+                let prompt = `${get('shot_type', 'a')},${get('style')},${get('main')},${get(
           'cos_play',
           'like'
         )},${get('action')},${get('space')},${get(
@@ -275,56 +337,56 @@ artists
           'artists',
           'by'
         )},highly detailed, HDR, UHD, 64K`
-        // console.log(prompt)
-        let data = Array.from(prompt.split(/,/), (p, index) => {
-          p = decodeURIComponent(p)
-          let res = p
-          try {
-            res = JSON.parse(p)
-            res = {
-              value:
-                (res.start ? res.start + ' ' : '') +
-                res.value +
-                (res.end ? ' ' + res.end : ''),
-              key: res.key,
-              tag: res.value
-            }
-          } catch (error) {
-            //
-          }
-          return res
-        })
-    
-        // 在random数组里，表示要打乱的key
-        let dataShuffle = data.filter(d =>
-          typeof d == 'object' ? random.includes(d.key) : false
-        )
-        // 打乱顺序
-        dataShuffle = dataShuffle.shuffle()
-        // 重排后的data
-        data = Array.from([...data], d => {
-          if (typeof d == 'object' && random.includes(d.key)) {
-            d = dataShuffle.pop()
-            // d = d.value
-          }
-          //   if (typeof d == 'object') d = d.value
-          return d
-        })
-        prompts[prompt] = data
-      })
-      return Array.from(Object.values(prompts), v => v)
-        .shuffle()
-        .slice(0, count)
-    }
-    
-    function createGUI () {
-      
-      let style = document.createElement('style')
-      document.head.appendChild(style)
-      style.setAttribute('type', 'text/css')
-    
-      style.appendChild(
-        document.createTextNode(`
+                    // console.log(prompt)
+                let data = Array.from(prompt.split(/,/), (p, index) => {
+                    p = decodeURIComponent(p)
+                    let res = p
+                    try {
+                        res = JSON.parse(p)
+                        res = {
+                            value:
+                                (res.start ? res.start + ' ' : '') +
+                                res.value +
+                                (res.end ? ' ' + res.end : ''),
+                            key: res.key,
+                            tag: res.value
+                        }
+                    } catch (error) {
+                        //
+                    }
+                    return res
+                })
+
+                // 在random数组里，表示要打乱的key
+                let dataShuffle = data.filter(d =>
+                        typeof d == 'object' ? random.includes(d.key) : false
+                    )
+                    // 打乱顺序
+                dataShuffle = dataShuffle.shuffle()
+                    // 重排后的data
+                data = Array.from([...data], d => {
+                    if (typeof d == 'object' && random.includes(d.key)) {
+                        d = dataShuffle.pop()
+                            // d = d.value
+                    }
+                    //   if (typeof d == 'object') d = d.value
+                    return d
+                })
+                prompts[prompt] = data
+            })
+            return Array.from(Object.values(prompts), v => v)
+                .shuffle()
+                .slice(0, count)
+        }
+
+        function createGUI() {
+
+            let style = document.createElement('style')
+            document.head.appendChild(style)
+            style.setAttribute('type', 'text/css')
+
+            style.appendChild(
+                document.createTextNode(`
       .prompt-keywords{
         display: flex;width: max-content;flex-direction: column;
       }
@@ -337,9 +399,16 @@ artists
         margin-top: 18px;
       }
       .prompt-keywords .setup .images{
-        height: 128px;
+        width: 1444px;
     background: #eee;
     margin-top: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+      }
+      .prompt-keywords .setup .images img{
+        height: 240px;
+    width: 240px;
       }
       .prompt-keywords .tag-result{
         background: blue;
@@ -383,16 +452,16 @@ artists
         outline:1px solid red
     }
     `)
-      )
-    
-      window._prompt_tools_number = 10
-    
-      let div = document.createElement('div'),
-        html = []
-    
-      for (let key in json) {
-        // console.log(html)
-        html.push(`
+            )
+
+            window._prompt_tools_number = 10
+
+            let div = document.createElement('div'),
+                html = []
+
+            for (let key in json) {
+                // console.log(html)
+                html.push(`
          <div class="item">
              <div class="title">${key}</div>
              <div class="children">
@@ -500,7 +569,7 @@ artists
         })
       div.querySelector('#prompt-create-btn').addEventListener('click', e => {
         window._prompt_tools_fixedJSON = {}
-    
+        document.body.querySelector('.images').innerHTML=''
         Array.from(div.querySelectorAll('.tag-fixed'), tag => {
           let json = JSON.parse(decodeURIComponent(tag.getAttribute('data-json')))
           window._prompt_tools_fixedJSON[json.key] = json.value
@@ -563,10 +632,10 @@ artists
     function displayPromptResult (data) {
       const color = 'thistle'
       //   let data = datas.pop()
-    
+      document.body.querySelector('.images').innerHTML=''
       resetTagUI()
     
-      let prompt = Array.from(data, d => {
+      let prompt = Array.from([...data], d => {
         if (typeof d == 'object') {
           //   console.log(d)
           let element = document.body.querySelector(
@@ -578,9 +647,38 @@ artists
         }
         return d
       }).join(',')
+      
+      // 查看下有没有生成过的图片
+      let images=document.querySelector('.prompt-keywords .images')
+      for (const image of Object.values(window._prompt_images_result)) {
+        if(image.prompt===prompt){
+          createImage(image.url,images)
+        }
+      }
+      if(images.childElementCount<10) getNewImage({
+        prompt,data
+      },5)
+
       console.log(prompt)
     }
+
+    function getNewImage(d,count=10){
+      let images=document.querySelector('.prompt-keywords .images')
+      getNewImageByPrompt(d).then(res=>{
+          count--;
+          createImage(res.url,images)
+         
+          if(count>0) getNewImage(d,count)
+      });
+    }
     
+    // 需要增加删除功能，方便挑选图片
+    function createImage(url,images){
+      let img=new Image();
+          img.src=url;
+          images.appendChild(img)
+    }
+
     //var json = {}
     
     /*Array.from(
@@ -707,7 +805,8 @@ artists
     // res[0]
     
     window.onload=()=>init();
-
-  </script>
+    </script>
+    
 </body>
+
 </html>
