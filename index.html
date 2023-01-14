@@ -17,12 +17,19 @@
             border: none;
             border-radius: 4px;
             outline: none;
-            line-height: 24px;
+            line-height: 32px;
             padding: 2px 14px;
             margin: 4px;
             cursor: pointer;
         }
-        
+        .input{
+          background: #eee;
+          min-width: 300px;
+    padding: 0 8px;
+          display: flex;
+    justify-content: center;
+    align-items: center;
+        }
         header {
             position: fixed;
             left: 0;
@@ -38,10 +45,9 @@
         }
         
         #input-my-prompt-keywords {
-            
-            min-height: 50vh;
-             
+            min-height: 50vh;  
         }
+        
         .input-text{
            width: 720px;
             background-color: #eee;
@@ -58,10 +64,11 @@
         }
         .input-text:before {
           content: attr(data-tip) " ";
-    color: #202124;
-    top: -32px;
-    position: relative;
+          color: #202124;
+          top: -32px;
+          position: relative;
         }
+       
     </style>
 </head>
 
@@ -70,6 +77,7 @@
     <header>
         <button id="new-my-prompt-keywords-btn">新建</button>
         <button id="create-my-prompt-keywords-btn">生成</button>
+        <button id="analyze-my-prompt-btn">分析</button>
         <button id="save-my-prompt-btn">保存</button>
     </header>
     <main>
@@ -216,13 +224,54 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
             return this.sort(() => Math.random() - 0.5)
         }
 
+        // 节流函数
+        function debounce(fn, wait) {
+          let timer = null;
+
+          return function () {
+            const context = this;
+            const args = arguments;
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+              fn.apply(context, args);
+            }, wait);
+          };
+        } 
+
+
+          // 拷贝到剪切板
+        function copyToClickBoard(content) {
+          navigator.clipboard.writeText(content)
+              .then(() => {
+                  console.log("Text copied to clipboard...",content)
+              })
+              .catch(err => {
+                  console.log('Something went wrong', err);
+              })
+          }
+
+            //下载文件
+            function saveAsJson (str , fileName){
+                //指定类型文件类型application/json;charset=utf-8
+              const blob = new Blob([str], { type: "application/json;charset=utf-8" });
+              const href = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.style.display = "none";
+              a.download = fileName; // 下载后文件名
+              a.href = href;
+              document.body.appendChild(a);
+              a.click();
+              a.remove(); // 下载完成移除元素
+              URL.revokeObjectURL(href); // 释放掉blob对象
+            };
 
         function getNewImageByPrompt({
             prompt,
             data
         }) {
             return new Promise((res, rej) => {
-                fetch("http://127.0.0.1:7860/run/infer_text2img_for_auto", {
+              
+                fetch(window._sd_server, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
@@ -246,7 +295,7 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
                                         window._prompt_images_result[id] = {
                                             prompt,
                                             data,
-                                            url
+                                            url,id
                                         };
                                         res(window._prompt_images_result[id]);
                                     };
@@ -260,20 +309,52 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
 
         }
 
+        function analyzePrompt(){
+          let tags={}
+          Array.from(Object.values(window._prompt_images_result),r=>{
+                          r.id=r.id.replace(/.*\//ig,'');
+                          r.data.forEach(d=>{
+                            if(d.tag){
+                              if(!tags[d.tag])tags[d.tag]=[]
+                              tags[d.tag].push(d)
+                            }
+                          })
+                          return r
+          })
+          for (const key in tags) {
+            tags[key]={
+              data:tags[key][0],
+              count:tags[key].length
+            }
+          }
+          console.log(tags)
+          return tags
+        }
+
         var json = {};
         window._prompt_images_result = {};
+        window._sd_server='http://127.0.0.1:7860/run/infer_text2img_for_auto'
 
         function init() {
             let inputMyKeywords = document.querySelector('#input-my-prompt-keywords'),
                 createMyPromptBtn = document.querySelector('#create-my-prompt-keywords-btn');
             let inputMyTemplate=document.querySelector('#input-my-prompt-template');
-            let saveMyPromptBtn=document.querySelector('#save-my-prompt-btn')
+            let saveMyPromptBtn=document.querySelector('#save-my-prompt-btn'),
+            analyzeMyPromptBtn=document.querySelector('#analyze-my-prompt-btn')
+
+            analyzeMyPromptBtn.addEventListener('click',e=>analyzePrompt());
 
             document.querySelector('#new-my-prompt-keywords-btn').addEventListener('click', e => {
                 inputMyKeywords.innerText = '';
                 inputMyKeywords.style.display = 'block';
                 createMyPromptBtn.style.display = 'block';
                 document.body.querySelector('.prompt-keywords').remove();
+            })
+            saveMyPromptBtn.addEventListener('click',e=>{
+              saveAsJson(JSON.stringify(Array.from(Object.values(window._prompt_images_result),r=>{
+                r.id=r.id.replace(/.*\//ig,'')
+                return r
+              })),document.title.init())
             })
             createMyPromptBtn.addEventListener('click', e => {
               let template=inputMyTemplate.innerText.init(),
@@ -548,13 +629,22 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
         <div style='display: flex;'>
           <button id="prompt-fixed-btn">固定值</button>
           <button id="prompt-shuffle-btn">顺序重排</button>
-          <div style="background: #eee;
-          padding: 0 12px;">
+          <div class="input">
             <label for="prompt-create-number">数量:</label>
             <input type="number" id="prompt-create-number-input" name="prompt-create-number" min="1" value="${window._prompt_tools_number}">
           </div>
         </div>
-        <button id="prompt-create-btn" style='width:120px'>生成prompt</button>
+        <div style='display: flex;margin-top: 12px;'>
+          <button id="prompt-create-btn" style='width:120px'>生成prompt</button>
+          <div class="input">
+              <label for="prompt-create-auto-checkbox">自动:</label>
+              <input type="checkbox" id="prompt-create-auto-checkbox" name="prompt-create-auto-checkbox">
+          </div>
+          <div class="input">
+            <label for="sd-server">服务器地址:</label>
+            <input type="text" id="sd-server-input" name="sd-server" value="${window._sd_server||''}">
+          </div>
+        </div>
         <div class="result"></div>
         <div class="images"></div>
       </div>
@@ -573,11 +663,13 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
             : '')
       }
     
+      //标签的点击动作
       Array.from(div.querySelectorAll('.tag'), tag =>
         tag.addEventListener('click', e => {
           checkStatus()
           let json = JSON.parse(decodeURIComponent(tag.getAttribute('data-json')))
-    
+          // console.log(json)
+          copyToClickBoard(JSON.stringify(json))
           let item = Array.from(div.querySelectorAll('.item'), item => item).filter(
             f => f.querySelector('.title').innerText == json.key
           )[0]
@@ -591,6 +683,7 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
           }
     
           if (window._prompt_tools_status == 'fixed') {
+          
             Array.from(item.querySelectorAll('.tag-fixed'), t =>
               t.classList.remove('tag-fixed')
             )
@@ -602,6 +695,11 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
           }
         })
       );
+
+      div.querySelector('#prompt-create-auto-checkbox').addEventListener('change',e=>{
+        console.log(e.target.checked)
+        window._prompt_auto_create=e.target.checked;
+      })
 
       //transform: scale(0.5) translate(-50%, -50%);
     
@@ -630,8 +728,11 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
           console.log(e.target.value)
           window._prompt_tools_number = e.target.value
         })
+
       div.querySelector('#prompt-create-btn').addEventListener('click', e => {
         window._prompt_tools_fixedJSON = {}
+        window._prompt_auto_create_index=0;
+        
         document.body.querySelector('.images').innerHTML=''
         Array.from(div.querySelectorAll('.tag-fixed'), tag => {
           let json = JSON.parse(decodeURIComponent(tag.getAttribute('data-json')))
@@ -654,26 +755,36 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
         div.querySelector('.setup .result').innerHTML = Array.from(
           res,
           (r, i) =>
-            `<button data-json='${encodeURIComponent(JSON.stringify(r))}'>${
+            `<button class="prompt-create-btn" data-json='${encodeURIComponent(JSON.stringify(r))}'>${
               i + 1
             }</button>`
         ).join('')
-        Array.from(div.querySelectorAll('.result button'), b => {
+        Array.from(div.querySelectorAll('.result button'), (b,index) => {
           //   console.log(b)
           b.addEventListener('click', e =>
           {Array.from(document.body.querySelectorAll('.prompt-keywords .result button'), t => {
             t.classList.remove('selected');
-          })
-          b.classList.add('selected')
+          });
+          b.classList.add('selected');
             displayPromptResult(
               JSON.parse(decodeURIComponent(b.getAttribute('data-json')))
-            )}
+            )
+            //window._prompt_auto_create_index=index;
+          }
           )
         })
         // console.log(document.body.querySelector('.prompt-keywords .setup .result'),Array.from(res,(r,i)=>`<button data-json='${encodeURIComponent(r)}'>${i+1}</button>`).join(""))
       })
     
       document.querySelector('main').appendChild(div)
+    }
+
+    function nextPromptCreateButton(){
+      if(document.body.querySelectorAll('.prompt-create-btn')&&document.body.querySelectorAll('.prompt-create-btn')[window._prompt_auto_create_index]){
+        document.body.querySelectorAll('.prompt-create-btn')[window._prompt_auto_create_index].click();
+      window._prompt_auto_create_index++;
+      }
+      
     }
     
     function resetTagUI () {
@@ -715,34 +826,36 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
       let images=document.querySelector('.prompt-keywords .images')
       for (const image of Object.values(window._prompt_images_result)) {
         if(image.prompt===prompt){
-          createImage(image.url,images)
+          createImage(image.id,images)
         }
       }
       if(images.childElementCount<10) getNewImage({
         prompt,data
       },5)
 
-      console.log(prompt)
+      copyToClickBoard(prompt)
     }
 
     function getNewImage(d,count=10){
       let images=document.querySelector('.prompt-keywords .images')
       getNewImageByPrompt(d).then(res=>{
           count--;
-          createImage(res.url,images)
+          createImage(res.id,images)
          
-          if(count>0) getNewImage(d,count)
+          if(count>0) {getNewImage(d,count)} else if(window._prompt_auto_create){
+            nextPromptCreateButton()
+          }
       });
     }
     
     // 需要增加删除功能，方便挑选图片
-    function createImage(url,images){
+    function createImage(id,images){
       let div=document.createElement('div');
       div.className='card';
       // div.setAttribute('data')
       images.appendChild(div)
       let img=new Image();
-          img.src=url;
+          img.src=id;
           div.appendChild(img)
       let btn=document.createElement('button');
       btn.style=`position: relative;
@@ -751,7 +864,7 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
       btn.innerText='删除'
       div.appendChild(btn);
       btn.addEventListener('click',e=>{
-        delete window._prompt_images_result[url]
+        delete window._prompt_images_result[id]
         div.remove()
       })
     }
