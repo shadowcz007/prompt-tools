@@ -38,9 +38,13 @@
         }
         
         #input-my-prompt-keywords {
-            width: 720px;
-            background-color: #eee;
+            
             min-height: 50vh;
+             
+        }
+        .input-text{
+           width: 720px;
+            background-color: #eee;
             padding: 12px;
             background-color: rgb(30, 30, 30);
             outline: none;
@@ -49,7 +53,14 @@
             font-family: Menlo, Monaco, "Courier New", monospace;
             font-size: 12px;
             line-height: 18px;
-            white-space: pre;
+            white-space: pre-wrap;
+            margin: 32px 0;
+        }
+        .input-text:before {
+          content: attr(data-tip) " ";
+    color: #202124;
+    top: -32px;
+    position: relative;
         }
     </style>
 </head>
@@ -59,11 +70,13 @@
     <header>
         <button id="new-my-prompt-keywords-btn">新建</button>
         <button id="create-my-prompt-keywords-btn">生成</button>
-
+        <button id="save-my-prompt-btn">保存</button>
     </header>
     <main>
-
-        <div id="input-my-prompt-keywords" contenteditable>
+        <div id="input-my-prompt-template" contenteditable class="input-text" data-tip="prompt模板">
+a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} lighting, ${lens} lens, ${ device }, by ${ artists },highly detailed, HDR, UHD, 64K
+        </div>
+        <div id="input-my-prompt-keywords" contenteditable class="input-text" data-tip="prompt种子词">
 
           #
           shot_type
@@ -226,15 +239,16 @@
                             let d = r.data;
                             if (d) {
                                 for (let url of d) {
+                                  let id=blobToUrl(base64toBlob(url))
                                     /* 确定是一张新图 */
-                                    if (!window._prompt_images_result[url]) {
+                                    if (!window._prompt_images_result[id]) {
                                         // console.log('新图#', window.items.length);
-                                        window._prompt_images_result[url] = {
+                                        window._prompt_images_result[id] = {
                                             prompt,
                                             data,
                                             url
                                         };
-                                        res(window._prompt_images_result[url]);
+                                        res(window._prompt_images_result[id]);
                                     };
                                     
                                 }
@@ -250,30 +264,48 @@
         window._prompt_images_result = {};
 
         function init() {
-            let inputMyText = document.querySelector('#input-my-prompt-keywords'),
+            let inputMyKeywords = document.querySelector('#input-my-prompt-keywords'),
                 createMyPromptBtn = document.querySelector('#create-my-prompt-keywords-btn');
+            let inputMyTemplate=document.querySelector('#input-my-prompt-template');
+            let saveMyPromptBtn=document.querySelector('#save-my-prompt-btn')
 
             document.querySelector('#new-my-prompt-keywords-btn').addEventListener('click', e => {
-                inputMyText.innerText = '';
-                inputMyText.style.display = 'block';
+                inputMyKeywords.innerText = '';
+                inputMyKeywords.style.display = 'block';
                 createMyPromptBtn.style.display = 'block';
                 document.body.querySelector('.prompt-keywords').remove();
             })
             createMyPromptBtn.addEventListener('click', e => {
+              let template=inputMyTemplate.innerText.init(),
+              keywords=inputMyKeywords.innerText.init();
+              if(template&&keywords){
                 //console.log(e)
-                createMyPromptBtn.style.display = 'none';
-                inputMyText.style.display = 'none';
-                let text = inputMyText.innerText;
-                let texts = text.split('#');
+
+                Array.from([createMyPromptBtn,inputMyKeywords,inputMyTemplate],e=>e.style.display = 'none')
+                
+                //模板处理
+                let ts=template.split(',');
+                ts=Array.from(ts,t=>extractKeyAndStartEnd(t));
+                window.ts=ts
+                
+                //种子词处理
+                let texts = keywords.split('#');
                 texts = Array.from(texts, t => t.init()).filter(f => f);
                 json = {};
+                
                 Array.from(texts, t => parsePrompt(t));
                 createGUI();
+              }else{
+                alert('请输入')
+              }
+                
             })
+            console.log('init',window.screenY)
+            window.scrollTo(0,-11111)
         }
 
 
-        function dataURLtoBlob(dataurl) {
+        function base64toBlob(dataurl) {
             var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
                 bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
             while (n--) {
@@ -282,8 +314,37 @@
             return new Blob([u8arr], { type: mime });
         }
 
+        function blobToUrl(blob_data) {
+          return URL.createObjectURL(blob_data)
+        }
 
+        //从模板里结构化提取
+        // 'a ${shot_type}'
+        // '${lighting} lighting'
+        function extractKeyAndStartEnd(string){
+          string=string.init()
+          let regex = /\$\{(.*?)\}/;
+          let matches = string.match(regex);
+          if(matches&&matches[0]&&matches[1]){
+            let end=string.replace(matches[0],'mmmmmmm').replace(/.*mmmmmmm/,'').init(),
+            start=string.replace(matches[0],'mmmmmmm').replace(/mmmmmmm.*/,'').init()
 
+            let keyword=matches[1].init();
+
+            return {keyword,start,end}
+          }
+          return {keyword:string}
+        }
+
+        function joinPromptTemplate(templates){
+          return Array.from(templates,t=>{
+              if(t.start!=undefined&&t.end!=undefined){
+                  return get(t.keyword,t.start,t.end)
+              }else{
+                  return t.keyword
+              }
+          }).join(',')
+        }
 
         //
         const parseText = t => Array.from(t, s => s.init()).filter(f => f)
@@ -326,19 +387,21 @@
 
             let prompts = {}
             Array.from(new Array(count * 2), a => {
-                let prompt = `${get('shot_type', 'a')},${get('style')},${get('main')},${get(
-          'cos_play',
-          'like'
-        )},${get('action')},${get('space')},${get(
-          'lighting',
-          '',
-          'lighting'
-        )}, ${get('lens', '', 'lens')}, ${get('device')},${get(
-          'artists',
-          'by'
-        )},highly detailed, HDR, UHD, 64K`
-                    // console.log(prompt)
-                let data = Array.from(prompt.split(/,/), (p, index) => {
+        //         let prompt = `${get('shot_type', 'a')},${get('style')},${get('main')},${get(
+        //   'cos_play',
+        //   'like'
+        // )},${get('action')},${get('space')},${get(
+        //   'lighting',
+        //   '',
+        //   'lighting'
+        // )}, ${get('lens', '', 'lens')}, ${get('device')},${get(
+        //   'artists',
+        //   'by'
+        // )},highly detailed, HDR, UHD, 64K`
+
+        let prompt=joinPromptTemplate(window.ts)
+
+        let data = Array.from(prompt.split(/,/), (p, index) => {
                     p = decodeURIComponent(p)
                     let res = p
                     try {
@@ -674,9 +737,23 @@
     
     // 需要增加删除功能，方便挑选图片
     function createImage(url,images){
+      let div=document.createElement('div');
+      div.className='card';
+      // div.setAttribute('data')
+      images.appendChild(div)
       let img=new Image();
           img.src=url;
-          images.appendChild(img)
+          div.appendChild(img)
+      let btn=document.createElement('button');
+      btn.style=`position: relative;
+    right: 64px;
+    top: -215px;`
+      btn.innerText='删除'
+      div.appendChild(btn);
+      btn.addEventListener('click',e=>{
+        delete window._prompt_images_result[url]
+        div.remove()
+      })
     }
 
     //var json = {}
@@ -804,7 +881,7 @@
     // )
     // res[0]
     
-    window.onload=()=>init();
+    window.onload=()=>setTimeout(init,1000);
     </script>
     
 </body>
