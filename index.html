@@ -20,7 +20,7 @@
             line-height: 32px;
             padding: 2px 14px;
             margin: 4px;
-            cursor: pointer;
+            cursor: pointer;margin: 0 12px;
         }
         .input{
           background: #eee;
@@ -28,7 +28,7 @@
     padding: 0 8px;
           display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: center;margin: 0 12px;
         }
         header {
             position: fixed;
@@ -311,23 +311,33 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
 
         function analyzePrompt(){
           let tags={}
-          Array.from(Object.values(window._prompt_images_result),r=>{
-                          r.id=r.id.replace(/.*\//ig,'');
+          Array.from(Object.values({...window._prompt_images_result}),r=>{
+                          // r.id=r.id.replace(/.*\//ig,'');
                           r.data.forEach(d=>{
                             if(d.tag){
                               if(!tags[d.tag])tags[d.tag]=[]
                               tags[d.tag].push(d)
                             }
                           })
-                          return r
-          })
+          });
+          let maxCount=1;
           for (const key in tags) {
-            tags[key]={
-              data:tags[key][0],
-              count:tags[key].length
+            let count=tags[key].length;
+            tags[key]=  {
+              ...tags[key][0],count
             }
+            maxCount=Math.max(maxCount,count)
           }
-          console.log(tags)
+          tags=Object.values(tags).sort((a,b)=>b.count-a.count)
+          // console.log(tags)
+          resetTagUI()
+          for (const tag of tags) {
+            let element=findTagUI(tag.key,tag.tag)
+            element.classList.add('tag-result');
+       
+            element.style.backgroundColor=`rgba(98,255,201,${tag.count/maxCount})`;
+          }
+          
           return tags
         }
 
@@ -351,7 +361,7 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
                 document.body.querySelector('.prompt-keywords').remove();
             })
             saveMyPromptBtn.addEventListener('click',e=>{
-              saveAsJson(JSON.stringify(Array.from(Object.values(window._prompt_images_result),r=>{
+              saveAsJson(JSON.stringify(Array.from(Object.values({...window._prompt_images_result}),r=>{
                 r.id=r.id.replace(/.*\//ig,'')
                 return r
               })),document.title.init())
@@ -636,7 +646,8 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
         </div>
         <div style='display: flex;margin-top: 12px;'>
           <button id="prompt-create-btn" style='width:120px'>生成prompt</button>
-          <div class="input">
+          <div class="input" style="width: 78px;
+    min-width: 0;">
               <label for="prompt-create-auto-checkbox">自动:</label>
               <input type="checkbox" id="prompt-create-auto-checkbox" name="prompt-create-auto-checkbox">
           </div>
@@ -697,7 +708,7 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
       );
 
       div.querySelector('#prompt-create-auto-checkbox').addEventListener('change',e=>{
-        console.log(e.target.checked)
+        // console.log(e.target.checked)
         window._prompt_auto_create=e.target.checked;
       })
 
@@ -761,17 +772,22 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
         ).join('')
         Array.from(div.querySelectorAll('.result button'), (b,index) => {
           //   console.log(b)
-          b.addEventListener('click', e =>
-          {Array.from(document.body.querySelectorAll('.prompt-keywords .result button'), t => {
-            t.classList.remove('selected');
-          });
-          b.classList.add('selected');
+          b.addEventListener('click', e => {
+            
+            Array.from(document.body.querySelectorAll('.prompt-keywords .result button'), t => {
+              t.classList.remove('selected');
+            });
+
+            b.classList.add('selected');
+
             displayPromptResult(
               JSON.parse(decodeURIComponent(b.getAttribute('data-json')))
-            )
-            //window._prompt_auto_create_index=index;
-          }
-          )
+            );
+
+            window._prompt_auto_create_index=index;
+
+            } );
+          if(index===0 && window._prompt_auto_create) b.click()
         })
         // console.log(document.body.querySelector('.prompt-keywords .setup .result'),Array.from(res,(r,i)=>`<button data-json='${encodeURIComponent(r)}'>${i+1}</button>`).join(""))
       })
@@ -802,6 +818,13 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
       })
       
     }
+
+    function findTagUI(key,tag){
+      // console.log(`.tag .${key.init()}_${tag.init().replace(/\s/gi, '')}`)
+      return document.body.querySelector(
+            `.tag.${key.init()}_${tag.init().replace(/\s/gi, '')}`
+          )
+    }
     
     function displayPromptResult (data) {
       const color = 'thistle'
@@ -812,9 +835,7 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
       let prompt = Array.from([...data], d => {
         if (typeof d == 'object') {
           //   console.log(d)
-          let element = document.body.querySelector(
-            `.${d.key.init()}_${d.tag.init().replace(/\s/gi, '')}`
-          )
+          let element =findTagUI(d.key,d.tag);
           element.classList.add('tag-result')
           element.style.backgroundColor = color
           d = d.value
@@ -828,10 +849,17 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
         if(image.prompt===prompt){
           createImage(image.id,images)
         }
+      };
+      if(window._prompt_auto_create) {
+        getNewImage({
+          prompt,data
+        },10)
+      }else{
+        if(images.childElementCount<10) getNewImage({
+          prompt,data
+        },5)
       }
-      if(images.childElementCount<10) getNewImage({
-        prompt,data
-      },5)
+     
 
       copyToClickBoard(prompt)
     }
