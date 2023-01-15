@@ -77,8 +77,9 @@
     <header>
         <button id="new-my-prompt-keywords-btn">新建</button>
         <button id="create-my-prompt-keywords-btn">生成</button>
-        <button id="analyze-my-prompt-btn">分析</button>
-        <button id="save-my-prompt-btn">保存</button>
+        <button id="import-my-result-btn">导入</button>
+        <button id="analyze-my-prompt-btn" style='display:none'>分析</button>
+        <button id="save-my-prompt-btn" style='display:none'>保存</button>
     </header>
     <main>
         <div id="input-my-prompt-template" contenteditable class="input-text" data-tip="prompt模板">
@@ -220,6 +221,18 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
         String.prototype.init = function() {
             return this.trim().toLowerCase()
         }
+        // 把字符串按照，分割后去重,按照\n组合
+        String.prototype.splitAndRank=function(t=',',e='\n'){
+          let text=this.init();
+          let tx=Array.from(text.split(t),tx=>tx.init());
+          tx=tx.unque()
+          return tx.sort().join(e)
+        }
+        Array.prototype.unque = function() {
+          let json={};
+          this.forEach(t=>json[t]=t)
+          return Object.values(json)
+        }
         Array.prototype.shuffle = function() {
             return this.sort(() => Math.random() - 0.5)
         }
@@ -285,28 +298,35 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
                     .then(r => r.json())
                     .then(
                         r => {
-                            let d = r.data;
-                            if (d) {
-                                for (let url of d) {
-                                  let id=blobToUrl(base64toBlob(url))
-                                    /* 确定是一张新图 */
-                                    if (!window._prompt_images_result[id]) {
-                                        // console.log('新图#', window.items.length);
-                                        window._prompt_images_result[id] = {
-                                            prompt,
-                                            data,
-                                            url,id
-                                        };
-                                        res(window._prompt_images_result[id]);
-                                    };
-                                    
-                                }
+                            let urls = r.data;
+                            if (urls) {
+                              let result=addAndUpdateUrls(urls,data,prompt)
+                                res(result)
                             }
                             res();
                         }
                     )
             })
 
+        }
+
+        function addAndUpdateUrls(urls,data,prompt){
+          let res=[];
+          for (let url of urls) {
+            let id=blobToUrl(base64toBlob(url))
+            /* 确定是一张新图 */
+            if (!window._prompt_images_result[id]) {
+                 // console.log('新图#', window.items.length);
+                window._prompt_images_result[id] = {
+                                            prompt,
+                                            data,
+                                            url,id
+                                        };
+              res.push(window._prompt_images_result[id])
+            };
+                                    
+           }
+           return res[0]
         }
 
         function analyzePrompt(){
@@ -347,24 +367,97 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
 
         function init() {
             let inputMyKeywords = document.querySelector('#input-my-prompt-keywords'),
-                createMyPromptBtn = document.querySelector('#create-my-prompt-keywords-btn');
+                newMyPromptBtn=document.querySelector('#new-my-prompt-keywords-btn'),
+                createMyPromptBtn = document.querySelector('#create-my-prompt-keywords-btn'),
+                importMyResBtn=document.querySelector('#import-my-result-btn');
             let inputMyTemplate=document.querySelector('#input-my-prompt-template');
             let saveMyPromptBtn=document.querySelector('#save-my-prompt-btn'),
-            analyzeMyPromptBtn=document.querySelector('#analyze-my-prompt-btn')
+            analyzeMyPromptBtn=document.querySelector('#analyze-my-prompt-btn');
+
+            importMyResBtn.addEventListener('click',e=>{
+                // Create an input element
+                let input = document.createElement('input');
+                input.type = 'file';
+                input.click()
+                // Listen for changes
+                input.addEventListener('change', (e) => {
+                  // Get the file
+                  let file = e.target.files[0];
+                  // Create a new FileReader
+                  let reader = new FileReader();
+                  // Read the contents of the file
+                  reader.readAsText(file);
+                  // When file content is loaded, 
+                  reader.onload = (e) => {
+                    // Print file content
+                    // console.log(e.target.result);
+                    Array.from([createMyPromptBtn,inputMyKeywords,inputMyTemplate],e=>e.style.display = 'none')
+                    Array.from([analyzeMyPromptBtn,saveMyPromptBtn],e=>e.style.display = 'block')
+                 
+// Parse JSON data
+                    // 临时
+//                     var kk={"template":[{"keyword":"shot_type","start":"a","end":""},{"keyword":"style","start":"","end":""},{"keyword":"main","start":"","end":""},{"keyword":"cos_play","start":"like","end":""},{"keyword":"action","start":"","end":""},{"keyword":"space","start":"","end":""},{"keyword":"lighting","start":"","end":"lighting"},{"keyword":"lens","start":"","end":"lens"},{"keyword":"device","start":"","end":""},{"keyword":"artists","start":"by","end":""},{"keyword":"highly detailed"},{"keyword":"hdr"},{"keyword":"uhd"},{"keyword":"64k"}],
+// "json":{"shot_type":["close-up","extreme close-up","pov","medium shot","long shot","product shot"],"style":["polaroid","monochrome","long exposure","color splash","tilt-shift","google earth satellite"],"main":["photo of a duckduck roast_duck"],"cos_play":["superhero warrior","wizard","vampire","witch","alien","robot","pirate","knight","ninja","detective","scientist","sorcerer","cyborg","zombie","monster","barbarian","elf","fairy","alchemist","superman","batman","spider-man","iron man","wonder woman","captain america","thor","the hulk","black panther","aquaman"],"action":["walking","splashing water","running","reading a book","sitting","looking at photo album","looking at food","driving a bicycle"],"space":["in the water","at the beach","on the beach","indoor","in the park","japanese city street","in window","futuristic park","in the forest","by the vaporwave pool","underground city carpark","driving in a town","in tokyo at night"],"lighting":["soft","ambient","ring","sun","cinematic","purple neon","nostalgic","sun rays"],"lens":["exotic colorful pastel","ray traced lighting and reflections","romantic lighting","canon eos r3","fish-eye","telephoto","macro"],"device":["iphone x","cctv","nikon z fx","canon","gopro"],"artists":["ruth bernhard","ansel adams","ray earnes","peter kemp","enki bilal","chesley bonestell","karel thole","jim burns"]},
+// "result":JSON.parse(e.target.result)}
+                    let kk=JSON.parse(e.target.result)
+                    window.json=kk.json;
+                    window.template_ts=kk.template;
+
+                    let promptData={}
+                    // window._prompt_images_result=kk.result;  
+                    for (const card of kk.result) {
+                      // console.log(card)
+                      addAndUpdateUrls([card.url],card.data,card.prompt)
+                      promptData[card.prompt]=card.data
+                    }
+                  
+                    createGUI();
+                    
+                    createPromptsForSelect(Object.values(promptData))
+
+                  }
+                });
+            })
 
             analyzeMyPromptBtn.addEventListener('click',e=>analyzePrompt());
 
-            document.querySelector('#new-my-prompt-keywords-btn').addEventListener('click', e => {
+            newMyPromptBtn.addEventListener('click', e => {
                 inputMyKeywords.innerText = '';
                 inputMyKeywords.style.display = 'block';
                 createMyPromptBtn.style.display = 'block';
                 document.body.querySelector('.prompt-keywords').remove();
             })
             saveMyPromptBtn.addEventListener('click',e=>{
-              saveAsJson(JSON.stringify(Array.from(Object.values({...window._prompt_images_result}),r=>{
-                r.id=r.id.replace(/.*\//ig,'')
-                return r
-              })),document.title.init())
+
+              // 导出文件格式 result,template,json
+
+              let res={};
+              Array.from(Object.values({...window._prompt_images_result}),r=>{
+                r.id=md5(r.url)
+                res[r.id]=r;
+              });
+              res=Object.values(res);
+
+              
+              let newJson={}
+              for (let k of res) {
+                for (let d of k.data) {
+                    if(d.key){
+                        if(!newJson[d.key])newJson[d.key]=[]
+                    newJson[d.key].push(d.tag)
+                    newJson[d.key]=newJson[d.key].unque()
+                    }
+                    
+                }
+              }
+
+              let result={
+                template:window.template_ts,
+                json:newJson,
+                result:res
+              }
+
+              saveAsJson(JSON.stringify(result),document.title.init())
             })
             createMyPromptBtn.addEventListener('click', e => {
               let template=inputMyTemplate.innerText.init(),
@@ -376,22 +469,21 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
                 
                 //模板处理
                 let ts=template.split(',');
-                ts=Array.from(ts,t=>extractKeyAndStartEnd(t));
-                window.ts=ts
+                window.template_ts=Array.from(ts,t=>extractKeyAndStartEnd(t));
                 
                 //种子词处理
                 let texts = keywords.split('#');
                 texts = Array.from(texts, t => t.init()).filter(f => f);
                 json = {};
-                
                 Array.from(texts, t => parsePrompt(t));
+                
                 createGUI();
               }else{
                 alert('请输入')
               }
                 
             })
-            console.log('init',window.screenY)
+            // console.log('init',window.screenY)
             window.scrollTo(0,-11111)
         }
 
@@ -427,14 +519,39 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
           return {keyword:string}
         }
 
-        function joinPromptTemplate(templates){
+        function joinPromptTemplate(templates,fixed){
           return Array.from(templates,t=>{
               if(t.start!=undefined&&t.end!=undefined){
-                  return get(t.keyword,t.start,t.end)
+                  let fixedVal=fixed(t.keyword)
+                  return get(t.keyword,t.start,t.end,fixedVal)
               }else{
                   return t.keyword
               }
           }).join(',')
+        }
+
+        function createPromptFromTemplate(templates,fixed){
+         
+          let prompt=joinPromptTemplate(templates,fixed),
+          data=Array.from(prompt.split(/,/), (p, index) => {
+                            p = decodeURIComponent(p)
+                            let res = p
+                            try {
+                                res = JSON.parse(p)
+                                res = {
+                                    value:
+                                        (res.start ? res.start + ' ' : '') +
+                                        res.value +
+                                        (res.end ? ' ' + res.end : ''),
+                                    key: res.key,
+                                    tag: res.value
+                                }
+                            } catch (error) {
+                                //
+                            }
+                            return res
+                        })
+          return {prompt,data}
         }
 
         //
@@ -443,11 +560,18 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
             let res = parseText(text.split('\n'))
             json[res[0]] = res.slice(1, res.length)
         }
-        const get = (key, start, end) => {
-            let fixeds = window._prompt_fixeds
-            let keys = Object.keys(fixeds)
+        // 
+
+        function getFixedValue(key){
+          let fixeds = window._prompt_fixeds
+          let keys = Object.keys(fixeds)
+          return keys.includes(key) ? fixeds[key] :null
+        }
+        
+
+        const get = (key, start, end,fixedVal=null) => {
             let res = {
-                value: keys.includes(key) ? fixeds[key] : randomGetIndex(json[key]),
+                value: fixedVal ? fixedVal : randomGetIndex(json[key]),
                 key
             }
             if (start) res = {
@@ -474,42 +598,31 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
 
             for (let key in fixeds) {
                 window._prompt_fixeds[key.init()] = fixeds[key].init()
-            }
+            };
 
-            let prompts = {}
+            let prompts = {};
+
             Array.from(new Array(count * 2), a => {
-        //         let prompt = `${get('shot_type', 'a')},${get('style')},${get('main')},${get(
-        //   'cos_play',
-        //   'like'
-        // )},${get('action')},${get('space')},${get(
-        //   'lighting',
-        //   '',
-        //   'lighting'
-        // )}, ${get('lens', '', 'lens')}, ${get('device')},${get(
-        //   'artists',
-        //   'by'
-        // )},highly detailed, HDR, UHD, 64K`
-
-        let prompt=joinPromptTemplate(window.ts)
-
-        let data = Array.from(prompt.split(/,/), (p, index) => {
-                    p = decodeURIComponent(p)
-                    let res = p
-                    try {
-                        res = JSON.parse(p)
-                        res = {
-                            value:
-                                (res.start ? res.start + ' ' : '') +
-                                res.value +
-                                (res.end ? ' ' + res.end : ''),
-                            key: res.key,
-                            tag: res.value
-                        }
-                    } catch (error) {
-                        //
-                    }
-                    return res
-                })
+              let {prompt,data}=createPromptFromTemplate(window.template_ts,{...window._prompt_fixeds})
+                // let prompt=joinPromptTemplate(window.template_ts)
+                // let data = Array.from(prompt.split(/,/), (p, index) => {
+                //             p = decodeURIComponent(p)
+                //             let res = p
+                //             try {
+                //                 res = JSON.parse(p)
+                //                 res = {
+                //                     value:
+                //                         (res.start ? res.start + ' ' : '') +
+                //                         res.value +
+                //                         (res.end ? ' ' + res.end : ''),
+                //                     key: res.key,
+                //                     tag: res.value
+                //                 }
+                //             } catch (error) {
+                //                 //
+                //             }
+                //             return res
+                //         })
 
                 // 在random数组里，表示要打乱的key
                 let dataShuffle = data.filter(d =>
@@ -521,11 +634,9 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
                 data = Array.from([...data], d => {
                     if (typeof d == 'object' && random.includes(d.key)) {
                         d = dataShuffle.pop()
-                            // d = d.value
                     }
-                    //   if (typeof d == 'object') d = d.value
                     return d
-                })
+                });
                 prompts[prompt] = data
             })
             return Array.from(Object.values(prompts), v => v)
@@ -761,38 +872,40 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
           window._prompt_tools_number
         )
     
-        resetTagUI()
-    
-        div.querySelector('.setup .result').innerHTML = Array.from(
-          res,
-          (r, i) =>
-            `<button class="prompt-create-btn" data-json='${encodeURIComponent(JSON.stringify(r))}'>${
-              i + 1
-            }</button>`
-        ).join('')
-        Array.from(div.querySelectorAll('.result button'), (b,index) => {
-          //   console.log(b)
-          b.addEventListener('click', e => {
-            
-            Array.from(document.body.querySelectorAll('.prompt-keywords .result button'), t => {
-              t.classList.remove('selected');
-            });
-
-            b.classList.add('selected');
-
-            displayPromptResult(
-              JSON.parse(decodeURIComponent(b.getAttribute('data-json')))
-            );
-
-            window._prompt_auto_create_index=index;
-
-            } );
-          if(index===0 && window._prompt_auto_create) b.click()
-        })
-        // console.log(document.body.querySelector('.prompt-keywords .setup .result'),Array.from(res,(r,i)=>`<button data-json='${encodeURIComponent(r)}'>${i+1}</button>`).join(""))
+        createPromptsForSelect(res)
+        
       })
     
       document.querySelector('main').appendChild(div)
+    }
+
+    function createPromptsForSelect(res){
+      
+      resetTagUI()
+      let div=document.querySelector('.prompt-keywords')
+      div.querySelector('.setup .result').innerHTML = Array.from(
+        res,
+        (r, i) =>
+          `<button class="prompt-create-btn" data-json='${encodeURIComponent(JSON.stringify(r))}'>${
+            i + 1
+          }</button>`
+      ).join('');
+      
+      Array.from(div.querySelectorAll('.result button'), (b,index) => {
+        
+        b.addEventListener('click', e => {
+          Array.from(document.body.querySelectorAll('.prompt-keywords .result button'), t => {
+            t.classList.remove('selected');
+          });
+          b.classList.add('selected');
+          displayPromptResult(
+            JSON.parse(decodeURIComponent(b.getAttribute('data-json')))
+          );
+          window._prompt_auto_create_index=index;
+          } );
+        if(index===0 && window._prompt_auto_create) b.click()
+      })
+
     }
 
     function nextPromptCreateButton(){
@@ -1024,7 +1137,15 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
     
     window.onload=()=>setTimeout(init,1000);
     </script>
-    
+    <script>
+      (()=>{
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = 'https://unpkg.com/@leonismoe/md5';
+        document.head.appendChild(script);
+      })()
+      
+    </script>
 </body>
 
 </html>
