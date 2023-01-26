@@ -20,17 +20,20 @@
             line-height: 32px;
             padding: 2px 14px;
             margin: 4px;
-            cursor: pointer;margin: 0 12px;
+            cursor: pointer;
+            margin: 0 12px;
         }
         
-        .input{
-          background: #eee;
-          min-width: 300px;
-          padding: 0 8px;
-          display: flex;
-          justify-content: center;
-          align-items: center;margin: 0 12px;
+        .input {
+            background: #eee;
+            min-width: 300px;
+            padding: 0 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 12px;
         }
+        
         header {
             position: fixed;
             left: 0;
@@ -46,11 +49,11 @@
         }
         
         #input-my-prompt-keywords {
-            min-height: 50vh;  
+            min-height: 50vh;
         }
         
-        .input-text{
-           width: 720px;
+        .input-text {
+            width: 720px;
             background-color: #eee;
             padding: 12px;
             background-color: rgb(30, 30, 30);
@@ -63,23 +66,24 @@
             white-space: pre-wrap;
             margin: 32px 0;
         }
+        
         .input-text:before {
-          content: attr(data-tip) " ";
-          color: #202124;
-          top: -32px;
-          position: relative;
+            content: attr(data-tip) " ";
+            color: #202124;
+            top: -32px;
+            position: relative;
         }
-       #loading{
-        width:100%;
-        height:100%;
-        background-color:#eee;
-        display:none;
-    
-    z-index: 999999;
-    position: fixed;
-    left: 0;
-    top: 0;
-       }
+        
+        #loading {
+            width: 100%;
+            height: 100%;
+            background-color: #eee;
+            display: none;
+            z-index: 999999;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
     </style>
 </head>
 
@@ -94,155 +98,34 @@
     </header>
     <main>
         <div id="input-my-prompt-template" contenteditable class="input-text" data-tip="prompt模板">
-a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} lighting, ${lens} lens, ${ device }, by ${ artists },highly detailed, HDR, UHD, 64K
+            a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} lighting, ${lens} lens, ${ device }, by ${ artists },highly detailed, HDR, UHD, 64K
         </div>
         <div id="input-my-prompt-keywords" contenteditable class="input-text" data-tip="prompt种子词">
 
-          #
-          shot_type
-          Close-up 
-          Extreme Close-up 
-          POV
-          Medium shot
-          Long shot
-          Product Shot
-          #
-          style
-              polaroid
-              Monochrome
-              Long exposure 
-              
-              Color splash 
-              Tilt-shift 
-              Google earth satellite 
-          
-          #
-          main
-          photo of a duckduck roast_duck
-          
-          #
-          
-          cos_play
-                  Superhero Warrior
-                  Wizard
-                  Vampire
-                  Witch
-                  Alien
-                  Robot
-                  Pirate
-                  Knight
-                  Ninja
-                  Detective
-                  Scientist
-                  Sorcerer
-                  Cyborg
-                  Zombie
-                  Monster
-                  Barbarian
-                  Elf
-                  Fairy
-                  Alchemist
-                  Superman 
-                  Batman 
-                  Spider-Man 
-                  Iron Man 
-                  Wonder Woman 
-                  Captain America 
-                  Thor 
-                  The Hulk 
-                  Black Panther 
-                  Aquaman
-                  
-          
-          #
-          action
-              walking
-              splashing water
-              running
-              reading a book
-              sitting
-              looking at photo album
-              looking at food 
-              driving a bicycle
-             
-          #
-          space
-              in the water
-              at the beach 
-              
-              on the beach 
-              Indoor 
-              In the park 
-              
-              Japanese city street
-              in window
-              futuristic park
-              in the forest
-              by the Vaporwave pool
-              underground city carpark 
-              driving in a town
-              in Tokyo at night
-          
-          #
-          lighting 
-              Soft 
-              Ambient
-              Ring
-              Sun
-              Cinematic
-              Purple Neon 
-              Nostalgic
-              Sun Rays
-          
-          #
-          lens
-              exotic colorful pastel 
-              
-               ray traced lighting and reflections
-              romantic lighting
-              canon eos r3 
-              
-              Fish-eye 
-              Telephoto 
-              Macro
-          
-          #
-          device
-              iPhone X
-              CCTV
-              Nikon Z FX
-              Canon
-              Gopro
-          
-          #
-          artists
-              Ruth Bernhard
-              Ansel Adams
-              Ray Earnes
-              Peter Kemp
-              Enki Bilal
-              Chesley Bonestell
-              Karel Thole
-              Jim Burns
+            # shot_type Close-up Extreme Close-up POV Medium shot Long shot Product Shot # style polaroid Monochrome Long exposure Color splash Tilt-shift Google earth satellite # main photo of a duckduck roast_duck # cos_play Superhero Warrior Wizard Vampire Witch
+            Alien Robot Pirate Knight Ninja Detective Scientist Sorcerer Cyborg Zombie Monster Barbarian Elf Fairy Alchemist Superman Batman Spider-Man Iron Man Wonder Woman Captain America Thor The Hulk Black Panther Aquaman # action walking splashing
+            water running reading a book sitting looking at photo album looking at food driving a bicycle # space in the water at the beach on the beach Indoor In the park Japanese city street in window futuristic park in the forest by the Vaporwave pool
+            underground city carpark driving in a town in Tokyo at night # lighting Soft Ambient Ring Sun Cinematic Purple Neon Nostalgic Sun Rays # lens exotic colorful pastel ray traced lighting and reflections romantic lighting canon eos r3 Fish-eye
+            Telephoto Macro # device iPhone X CCTV Nikon Z FX Canon Gopro # artists Ruth Bernhard Ansel Adams Ray Earnes Peter Kemp Enki Bilal Chesley Bonestell Karel Thole Jim Burns
         </div>
     </main>
     <footer></footer>
 
     <script>
         String.prototype.init = function() {
-            return this.trim().toLowerCase()
-        }
-        // 把字符串按照，分割后去重,按照\n组合
-        String.prototype.splitAndRank=function(t=',',e='\n'){
-          let text=this.init();
-          let tx=Array.from(text.split(t),tx=>tx.init());
-          tx=tx.unque()
-          return tx.sort().join(e)
+                return this.trim().toLowerCase()
+            }
+            // 把字符串按照，分割后去重,按照\n组合
+        String.prototype.splitAndRank = function(t = ',', e = '\n') {
+            let text = this.init();
+            let tx = Array.from(text.split(t), tx => tx.init());
+            tx = tx.unque()
+            return tx.sort().join(e)
         }
         Array.prototype.unque = function() {
-          let json={};
-          this.forEach(t=>json[t]=t)
-          return Object.values(json)
+            let json = {};
+            this.forEach(t => json[t] = t)
+            return Object.values(json)
         }
         Array.prototype.shuffle = function() {
             return this.sort(() => Math.random() - 0.5)
@@ -250,51 +133,53 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
 
         // 节流函数
         function debounce(fn, wait) {
-          let timer = null;
+            let timer = null;
 
-          return function () {
-            const context = this;
-            const args = arguments;
-            clearTimeout(timer);
-            timer = setTimeout(() => {
-              fn.apply(context, args);
-            }, wait);
-          };
-        } 
-
-
-          // 拷贝到剪切板
-        function copyToClickBoard(content) {
-          navigator.clipboard.writeText(content)
-              .then(() => {
-                  console.log("Text copied to clipboard...",content)
-              })
-              .catch(err => {
-                  console.log('Something went wrong', err);
-              })
-          }
-
-            //下载文件
-            function saveAsJson (str , fileName){
-                //指定类型文件类型application/json;charset=utf-8
-              const blob = new Blob([str], { type: "application/json;charset=utf-8" });
-              const href = URL.createObjectURL(blob);
-              const a = document.createElement("a");
-              a.style.display = "none";
-              a.download = fileName; // 下载后文件名
-              a.href = href;
-              document.body.appendChild(a);
-              a.click();
-              a.remove(); // 下载完成移除元素
-              URL.revokeObjectURL(href); // 释放掉blob对象
+            return function() {
+                const context = this;
+                const args = arguments;
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    fn.apply(context, args);
+                }, wait);
             };
+        }
+
+
+        // 拷贝到剪切板
+        function copyToClickBoard(content) {
+            navigator.clipboard.writeText(content)
+                .then(() => {
+                    console.log("Text copied to clipboard...", content)
+                })
+                .catch(err => {
+                    console.log('Something went wrong', err);
+                })
+        }
+
+        //下载文件
+        function saveAsJson(str, fileName) {
+            //指定类型文件类型application/json;charset=utf-8
+            const blob = new Blob([str], {
+                type: "application/json;charset=utf-8"
+            });
+            const href = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.style.display = "none";
+            a.download = fileName; // 下载后文件名
+            a.href = href;
+            document.body.appendChild(a);
+            a.click();
+            a.remove(); // 下载完成移除元素
+            URL.revokeObjectURL(href); // 释放掉blob对象
+        };
 
         function getNewImageByPrompt({
             prompt,
             data
         }) {
             return new Promise((res, rej) => {
-              
+
                 fetch(window._sd_server, {
                         method: "POST",
                         headers: {
@@ -311,7 +196,7 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
                         r => {
                             let urls = r.data;
                             if (urls) {
-                              let result=addAndUpdateUrls(urls,data,prompt)
+                                let result = addAndUpdateUrls(urls, data, prompt)
                                 res(result)
                             }
                             res();
@@ -321,133 +206,139 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
 
         }
 
-        function addAndUpdateUrls(urls,data,prompt){
-          let res=[];
-          for (let url of urls) {
-            let id=blobToUrl(base64toBlob(url))
-            /* 确定是一张新图 */
-            if (!window._prompt_images_result[id]) {
-                 // console.log('新图#', window.items.length);
-                window._prompt_images_result[id] = {
-                                            prompt,
-                                            data,
-                                            url,id
-                                        };
-              res.push(window._prompt_images_result[id])
-            };
-                                    
-           }
-           return res[0]
+        function addAndUpdateUrls(urls, data, prompt) {
+            let res = [];
+            for (let url of urls) {
+                let id = blobToUrl(base64toBlob(url))
+                    /* 确定是一张新图 */
+                if (!window._prompt_images_result[id]) {
+                    // console.log('新图#', window.items.length);
+                    window._prompt_images_result[id] = {
+                        prompt,
+                        data,
+                        url,
+                        id
+                    };
+                    res.push(window._prompt_images_result[id])
+                };
+
+            }
+            return res[0]
         }
 
-        function analyzePrompt(){
-          let tags={}
-          Array.from(Object.values({...window._prompt_images_result}),r=>{
-                          // r.id=r.id.replace(/.*\//ig,'');
-                          r.data.forEach(d=>{
-                            if(d.tag){
-                              if(!tags[d.tag])tags[d.tag]=[]
-                              tags[d.tag].push(d)
-                            }
-                          })
-          });
-          let maxCount=1;
-          for (const key in tags) {
-            let count=tags[key].length;
-            tags[key]=  {
-              ...tags[key][0],count
+        function analyzePrompt() {
+            let tags = {}
+            Array.from(Object.values({...window._prompt_images_result
+            }), r => {
+                // r.id=r.id.replace(/.*\//ig,'');
+                r.data.forEach(d => {
+                    if (d.tag) {
+                        if (!tags[d.tag]) tags[d.tag] = []
+                        tags[d.tag].push(d)
+                    }
+                })
+            });
+            let maxCount = 1;
+            for (const key in tags) {
+                let count = tags[key].length;
+                tags[key] = {
+                    ...tags[key][0],
+                    count
+                }
+                maxCount = Math.max(maxCount, count)
             }
-            maxCount=Math.max(maxCount,count)
-          }
-          tags=Object.values(tags).sort((a,b)=>b.count-a.count)
-          // console.log(tags)
-          resetTagUI()
-          for (const tag of tags) {
-            let element=findTagUI(tag.key,tag.tag)
-            element.classList.add('tag-result');
-       
-            element.style.backgroundColor=`rgba(98,255,201,${tag.count/maxCount})`;
-          }
-          
-          return tags
+            tags = Object.values(tags).sort((a, b) => b.count - a.count)
+                // console.log(tags)
+            resetTagUI()
+            for (const tag of tags) {
+                let element = findTagUI(tag.key, tag.tag)
+                element.classList.add('tag-result');
+
+                element.style.backgroundColor = `rgba(98,255,201,${tag.count/maxCount})`;
+            }
+
+            return tags
         }
 
         var json = {};
         window._prompt_images_result = {};
-        window._sd_server='http://127.0.0.1:7860/run/infer_text2img_for_auto'
+        window._sd_server = 'http://127.0.0.1:7860/run/infer_text2img_for_auto'
 
 
-        function loading(display=true){
-          let e=document.querySelector('#loading');
-           e.style.display=display?'block':'none'
+        function loading(display = true) {
+            let e = document.querySelector('#loading');
+            e.style.display = display ? 'block' : 'none'
         }
 
         function init() {
             loading(true)
             let inputMyKeywords = document.querySelector('#input-my-prompt-keywords'),
-                newMyPromptBtn=document.querySelector('#new-my-prompt-keywords-btn'),
+                newMyPromptBtn = document.querySelector('#new-my-prompt-keywords-btn'),
                 createMyPromptBtn = document.querySelector('#create-my-prompt-keywords-btn'),
-                importMyResBtn=document.querySelector('#import-my-result-btn');
-            let inputMyTemplate=document.querySelector('#input-my-prompt-template');
-            let saveMyPromptBtn=document.querySelector('#save-my-prompt-btn'),
-            analyzeMyPromptBtn=document.querySelector('#analyze-my-prompt-btn');
+                importMyResBtn = document.querySelector('#import-my-result-btn');
+            let inputMyTemplate = document.querySelector('#input-my-prompt-template');
+            let saveMyPromptBtn = document.querySelector('#save-my-prompt-btn'),
+                analyzeMyPromptBtn = document.querySelector('#analyze-my-prompt-btn');
 
 
-            importMyResBtn.addEventListener('click',e=>{
+            importMyResBtn.addEventListener('click', e => {
                 // Create an input element
                 let input = document.createElement('input');
                 input.type = 'file';
                 input.click()
-                // Listen for changes
+                    // Listen for changes
                 input.addEventListener('change', (e) => {
-                  loading(true)
-                  // Get the file
-                  let file = e.target.files[0];
-                  // Create a new FileReader
-                  let reader = new FileReader();
-                  // Read the contents of the file
-                  reader.readAsText(file);
-                  // When file content is loaded, 
-                  reader.onload = (e) => {
-                    // Print file content
-                    // console.log(e.target.result);
-                    Array.from([createMyPromptBtn,inputMyKeywords,inputMyTemplate],e=>e.style.display = 'none')
-                    Array.from([analyzeMyPromptBtn,saveMyPromptBtn],e=>e.style.display = 'block')
-                 
-                    // Parse JSON data
+                    loading(true)
+                        // Get the file
+                    let file = e.target.files[0];
+                    // Create a new FileReader
+                    let reader = new FileReader();
+                    // Read the contents of the file
+                    reader.readAsText(file);
+                    // When file content is loaded, 
+                    reader.onload = (e) => {
+                        // Print file content
+                        // console.log(e.target.result);
+                        Array.from([createMyPromptBtn, inputMyKeywords, inputMyTemplate], e => e.style.display = 'none')
+                        Array.from([analyzeMyPromptBtn, saveMyPromptBtn], e => e.style.display = 'block')
 
-                    let kk=JSON.parse(e.target.result)
-                    window.json=kk.json;
-                    window.template_ts=kk.template;
+                        // Parse JSON data
 
-                    
-                    // 更新 window._prompt_images_result  
-                    for (const card of kk.result) {
-                      // console.log(card)
-                      addAndUpdateUrls([card.url],card.data,card.prompt)
-                      // promptData[card.prompt]=card.data
+                        let kk = JSON.parse(e.target.result)
+                        window.json = kk.json;
+                        window.template_ts = kk.template;
+
+
+                        // 更新 window._prompt_images_result  
+                        for (const card of kk.result) {
+                            // console.log(card)
+                            addAndUpdateUrls([card.url], card.data, card.prompt)
+                                // promptData[card.prompt]=card.data
+                        }
+                        // 从结果中提取可视化的prompt
+                        let promptData = {}
+                        for (const card of Object.values(window._prompt_images_result)) {
+                            let id = md5(card.prompt)
+                            if (!promptData[id]) promptData[id] = {
+                                data: card.data,
+                                id
+                            };
+                        };
+                        promptData = Object.values(promptData).sort((a, b) => a.id - b.id)
+
+                        promptData = Array.from(promptData, d => d.data);
+                        console.log(promptData)
+                        createGUI();
+
+                        createPromptsForSelect(promptData);
+
+                        loading(false)
+
                     }
-                    // 从结果中提取可视化的prompt
-                    let promptData={}
-                    for (const card of Object.values(window._prompt_images_result)) {
-                      let id=md5(card.prompt)
-                      if(!promptData[id]) promptData[id]={data:card.data,id};
-                    };
-                    promptData=Object.values(promptData).sort((a,b)=>a.id-b.id)
-                    
-                    promptData=Array.from(promptData,d=>d.data);
-                    console.log(promptData)
-                    createGUI();
-                    
-                    createPromptsForSelect(promptData);
-
-                    loading(false)
-
-                  }
                 });
             })
 
-            analyzeMyPromptBtn.addEventListener('click',e=>analyzePrompt());
+            analyzeMyPromptBtn.addEventListener('click', e => analyzePrompt());
 
             newMyPromptBtn.addEventListener('click', e => {
                 inputMyKeywords.innerText = '';
@@ -455,147 +346,162 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
                 createMyPromptBtn.style.display = 'block';
                 document.body.querySelector('.prompt-keywords').remove();
             })
-            saveMyPromptBtn.addEventListener('click',e=>{
+            saveMyPromptBtn.addEventListener('click', e => {
 
-              // 导出文件格式 result,template,json
-              let res={};
-              Array.from(Object.values({...window._prompt_images_result}),r=>{
-                r.id=md5(r.url)
-                res[r.id]=r;
-              });
-              res=Object.values(res);
+                // 导出文件格式 result,template,json
+                let res = {};
+                Array.from(Object.values({...window._prompt_images_result
+                }), r => {
+                    r.id = md5(r.url)
+                    res[r.id] = r;
+                });
+                res = Object.values(res);
 
-              let newJson={}
-              for (let k of res) {
-                for (let d of k.data) {
-                    if(d.key){
-                        if(!newJson[d.key])newJson[d.key]=[]
-                    newJson[d.key].push(d.tag)
-                    newJson[d.key]=newJson[d.key].unque()
-                    } 
+                let newJson = {}
+                for (let k of res) {
+                    for (let d of k.data) {
+                        if (d.key) {
+                            if (!newJson[d.key]) newJson[d.key] = []
+                            newJson[d.key].push(d.tag)
+                            newJson[d.key] = newJson[d.key].unque()
+                        }
+                    }
                 }
-              }
 
-              let result={
-                template:window.template_ts,
-                json:newJson,
-                result:res
-              }
+                let result = {
+                    template: window.template_ts,
+                    json: newJson,
+                    result: res
+                }
 
-              saveAsJson(JSON.stringify(result),document.title.init())
+                saveAsJson(JSON.stringify(result), document.title.init())
             })
             createMyPromptBtn.addEventListener('click', e => {
-              let template=inputMyTemplate.innerText.init(),
-              keywords=inputMyKeywords.innerText.init();
-              if(template&&keywords){
-                //console.log(e)
+                    let template = inputMyTemplate.innerText.init(),
+                        keywords = inputMyKeywords.innerText.init();
+                    if (template && keywords) {
+                        //console.log(e)
 
-                Array.from([createMyPromptBtn,inputMyKeywords,inputMyTemplate],e=>e.style.display = 'none')
-                
-                //模板处理
-                let ts=template.split(',');
-                window.template_ts=Array.from(ts,t=>extractKeyAndStartEnd(t));
-                
-                //种子词处理
-                let texts = keywords.split('#');
-                texts = Array.from(texts, t => t.init()).filter(f => f);
-                json = {};
-                Array.from(texts, t => parsePrompt(t));
-                
-                createGUI();
-              }else{
-                alert('请输入')
-              }
-                
-            })
-            // console.log('init',window.screenY)
-            window.scrollTo(0,-11111);
+                        Array.from([createMyPromptBtn, inputMyKeywords, inputMyTemplate], e => e.style.display = 'none')
+
+                        //模板处理
+                        let ts = template.split(',');
+                        window.template_ts = Array.from(ts, t => extractKeyAndStartEnd(t));
+
+                        //种子词处理
+                        let texts = keywords.split('#');
+                        texts = Array.from(texts, t => t.init()).filter(f => f);
+                        json = {};
+                        Array.from(texts, t => parsePrompt(t));
+
+                        createGUI();
+                    } else {
+                        alert('请输入')
+                    }
+
+                })
+                // console.log('init',window.screenY)
+            window.scrollTo(0, -11111);
             loading(false);
         }
 
 
         function base64toBlob(dataurl) {
-            var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
-                bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+            var arr = dataurl.split(','),
+                mime = arr[0].match(/:(.*?);/)[1],
+                bstr = atob(arr[1]),
+                n = bstr.length,
+                u8arr = new Uint8Array(n);
             while (n--) {
                 u8arr[n] = bstr.charCodeAt(n);
             }
-            return new Blob([u8arr], { type: mime });
+            return new Blob([u8arr], {
+                type: mime
+            });
         }
 
         function blobToUrl(blob_data) {
-          return URL.createObjectURL(blob_data)
+            return URL.createObjectURL(blob_data)
         }
 
         //从模板里结构化提取
         // 'a ${shot_type}'
         // '${lighting} lighting'
-        function extractKeyAndStartEnd(string){
-          string=string.init()
-          let regex = /\$\{(.*?)\}/;
-          let matches = string.match(regex);
-          if(matches&&matches[0]&&matches[1]){
-            let end=string.replace(matches[0],'mmmmmmm').replace(/.*mmmmmmm/,'').init(),
-            start=string.replace(matches[0],'mmmmmmm').replace(/mmmmmmm.*/,'').init()
+        function extractKeyAndStartEnd(string) {
+            string = string.init()
+            let regex = /\$\{(.*?)\}/;
+            let matches = string.match(regex);
+            if (matches && matches[0] && matches[1]) {
+                let end = string.replace(matches[0], 'mmmmmmm').replace(/.*mmmmmmm/, '').init(),
+                    start = string.replace(matches[0], 'mmmmmmm').replace(/mmmmmmm.*/, '').init()
 
-            let keyword=matches[1].init();
+                let keyword = matches[1].init();
 
-            return {keyword,start,end}
-          }
-          return {keyword:string}
+                return {
+                    keyword,
+                    start,
+                    end
+                }
+            }
+            return {
+                keyword: string
+            }
         }
 
-        function joinPromptTemplate(templates,fixed={}){
-          return Array.from(templates,t=>{
-              if(t.start!=undefined&&t.end!=undefined){
-                  let fixedVal=fixed[t.keyword]
-                  return get(t.keyword,t.start,t.end,fixedVal)
-              }else{
-                  return t.keyword
-              }
-          }).join(',')
+        function joinPromptTemplate(templates, fixed = {}) {
+            return Array.from(templates, t => {
+                if (t.start != undefined && t.end != undefined) {
+                    let fixedVal = fixed[t.keyword]
+                    return get(t.keyword, t.start, t.end, fixedVal)
+                } else {
+                    return t.keyword
+                }
+            }).join(',')
         }
 
-        function createPromptFromTemplate(templates,fixed){
-         
-          let prompt=joinPromptTemplate(templates,fixed),
-          data=Array.from(prompt.split(/,/), (p, index) => {
-                            p = decodeURIComponent(p)
-                            let res = p
-                            try {
-                                res = JSON.parse(p)
-                                res = {
-                                    value:
-                                        (res.start ? res.start + ' ' : '') +
-                                        res.value +
-                                        (res.end ? ' ' + res.end : ''),
-                                    key: res.key,
-                                    tag: res.value
-                                }
-                            } catch (error) {
-                                //
-                            }
-                            return res
-                        })
-          return {prompt,data}
+        function createPromptFromTemplate(templates, fixed) {
+
+            let prompt = joinPromptTemplate(templates, fixed),
+                data = Array.from(prompt.split(/,/), (p, index) => {
+                    p = decodeURIComponent(p)
+                    let res = p
+                    try {
+                        res = JSON.parse(p)
+                        res = {
+                            value:
+                                (res.start ? res.start + ' ' : '') +
+                                res.value +
+                                (res.end ? ' ' + res.end : ''),
+                            key: res.key,
+                            tag: res.value
+                        }
+                    } catch (error) {
+                        //
+                    }
+                    return res
+                })
+            return {
+                prompt,
+                data
+            }
         }
 
         //
         const parseText = t => Array.from(t, s => s.init()).filter(f => f)
         const parsePrompt = text => {
-            let res = parseText(text.split('\n'))
-            json[res[0]] = res.slice(1, res.length)
-        }
-        // 
+                let res = parseText(text.split('\n'))
+                json[res[0]] = res.slice(1, res.length)
+            }
+            // 
 
-        function getFixedValue(key){
-          let fixeds = window._prompt_fixeds
-          let keys = Object.keys(fixeds)
-          return keys.includes(key) ? fixeds[key] :null
+        function getFixedValue(key) {
+            let fixeds = window._prompt_fixeds
+            let keys = Object.keys(fixeds)
+            return keys.includes(key) ? fixeds[key] : null
         }
-        
 
-        const get = (key, start, end,fixedVal=null) => {
+
+        const get = (key, start, end, fixedVal = null) => {
             let res = {
                 value: fixedVal ? fixedVal : randomGetIndex(json[key]),
                 key
@@ -629,26 +535,30 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
             let prompts = {};
 
             Array.from(new Array(count * 2), a => {
-              let {prompt,data}=createPromptFromTemplate(window.template_ts,{...window._prompt_fixeds})
-                // let prompt=joinPromptTemplate(window.template_ts)
-                // let data = Array.from(prompt.split(/,/), (p, index) => {
-                //             p = decodeURIComponent(p)
-                //             let res = p
-                //             try {
-                //                 res = JSON.parse(p)
-                //                 res = {
-                //                     value:
-                //                         (res.start ? res.start + ' ' : '') +
-                //                         res.value +
-                //                         (res.end ? ' ' + res.end : ''),
-                //                     key: res.key,
-                //                     tag: res.value
-                //                 }
-                //             } catch (error) {
-                //                 //
-                //             }
-                //             return res
-                //         })
+                let {
+                    prompt,
+                    data
+                } = createPromptFromTemplate(window.template_ts, {...window._prompt_fixeds
+                    })
+                    // let prompt=joinPromptTemplate(window.template_ts)
+                    // let data = Array.from(prompt.split(/,/), (p, index) => {
+                    //             p = decodeURIComponent(p)
+                    //             let res = p
+                    //             try {
+                    //                 res = JSON.parse(p)
+                    //                 res = {
+                    //                     value:
+                    //                         (res.start ? res.start + ' ' : '') +
+                    //                         res.value +
+                    //                         (res.end ? ' ' + res.end : ''),
+                    //                     key: res.key,
+                    //                     tag: res.value
+                    //                 }
+                    //             } catch (error) {
+                    //                 //
+                    //             }
+                    //             return res
+                    //         })
 
                 // 在random数组里，表示要打乱的key
                 let dataShuffle = data.filter(d =>
@@ -671,87 +581,87 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
         }
 
         function createGUI() {
-            let promptUI=document.body.querySelector('.prompt-keywords');
+            let promptUI = document.body.querySelector('.prompt-keywords');
 
-            if(!promptUI){
-              let style = document.createElement('style')
-            document.head.appendChild(style)
-            style.setAttribute('type', 'text/css')
+            if (!promptUI) {
+                let style = document.createElement('style')
+                document.head.appendChild(style)
+                style.setAttribute('type', 'text/css')
 
-            style.appendChild(
-                document.createTextNode(`
-      .prompt-keywords{
-        display: flex;width: max-content;flex-direction: column;
-      }
-      .prompt-keywords .setup{
-        display: flex;
-        margin: 24px;
-        flex-direction: column;
-      }
-      .prompt-keywords .setup .result{
-        margin-top: 18px;
-      }
-      .prompt-keywords .setup .images{
-        width: 1444px;
-    background: #eee;
-    margin-top: 6px;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-      }
-      .prompt-keywords .setup .images img{
-        height: 240px;
-    width: 240px;
-      }
-      .prompt-keywords .tag-result{
-        background: blue;
-      }
-      .prompt-keywords .selected{
-        background: #673ab7;
-        color: white;
-        box-shadow: inset 3px 4px 7px #3f51b5;
-      }
-      .prompt-keywords .content{
-        display: flex;
-      }
-      .prompt-keywords .title{
-          padding: 4px;
-          background: #424242;
-          color: white;
-          text-align: center;
-          margin: 2px 4px;
-          font-weight: 800;
-      }
-      .prompt-keywords .tag{
-          background: #eee;
-          padding: 4px;
-          text-align: center;
-          line-height: 24px;
-          font-size: 12px;
-          margin: 4px;
-      }
-      .prompt-keywords .tag-fixed{
-        background: red;
-    }
-      .prompt-keywords .tag:hover{
-        background: #ffeb3b;
-        cursor: pointer;
-        box-shadow: 0 0 4px 0px #607d8b;
-    }
-    .prompt-keywords .tag-result{
-        background:#00bcd4
-    }
-    .prompt-keywords .key-shuffle{
-        outline:1px solid red
-    }
-    `)
-            )
+                style.appendChild(
+                    document.createTextNode(`
+              .prompt-keywords{
+                display: flex;width: max-content;flex-direction: column;
+              }
+              .prompt-keywords .setup{
+                display: flex;
+                margin: 24px;
+                flex-direction: column;
+              }
+              .prompt-keywords .setup .result{
+                margin-top: 18px;
+              }
+              .prompt-keywords .setup .images{
+                width: 1444px;
+            background: #eee;
+            margin-top: 6px;
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: row;
+              }
+              .prompt-keywords .setup .images img{
+                height: fit-content;
+                width: 240px;
+              }
+              .prompt-keywords .tag-result{
+                background: blue;
+              }
+              .prompt-keywords .selected{
+                background: #673ab7;
+                color: white;
+                box-shadow: inset 3px 4px 7px #3f51b5;
+              }
+              .prompt-keywords .content{
+                display: flex;
+              }
+              .prompt-keywords .title{
+                  padding: 4px;
+                  background: #424242;
+                  color: white;
+                  text-align: center;
+                  margin: 2px 4px;
+                  font-weight: 800;
+              }
+              .prompt-keywords .tag{
+                  background: #eee;
+                  padding: 4px;
+                  text-align: center;
+                  line-height: 24px;
+                  font-size: 12px;
+                  margin: 4px;
+              }
+              .prompt-keywords .tag-fixed{
+                background: red;
             }
-            
+              .prompt-keywords .tag:hover{
+                background: #ffeb3b;
+                cursor: pointer;
+                box-shadow: 0 0 4px 0px #607d8b;
+            }
+            .prompt-keywords .tag-result{
+                background:#00bcd4
+            }
+            .prompt-keywords .key-shuffle{
+                outline:1px solid red
+            }
+    `)
+                )
+            }
+
 
             window._prompt_tools_number = 10
-            
-            let div = promptUI?promptUI:document.createElement('div'),
+
+            let div = promptUI ? promptUI : document.createElement('div'),
                 html = []
 
             for (let key in json) {
@@ -1169,13 +1079,12 @@ a ${shot_type},${style},${main},like ${cos_play},${action},${space},${lighting} 
     window.onload=()=>setTimeout(init,1000);
     </script>
     <script>
-      (()=>{
-        var script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = 'https://unpkg.com/@leonismoe/md5';
-        document.head.appendChild(script);
-      })()
-      
+        (() => {
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = 'https://unpkg.com/@leonismoe/md5';
+            document.head.appendChild(script);
+        })()
     </script>
 </body>
 
