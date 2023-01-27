@@ -502,6 +502,7 @@
                         //console.log(e)
 
                         Array.from([createMyPromptBtn, inputMyKeywords, inputMyTemplate], e => e.style.display = 'none')
+                        Array.from([saveMyPromptBtn, analyzeMyPromptBtn], e => e.style.display = 'block')
 
                         //模板处理
                         let ts = template.split(',');
