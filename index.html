@@ -389,6 +389,10 @@
             e.style.display = display ? 'block' : 'none'
         }
 
+        function createTagClassName(key,tag){
+        return 'T'+md5(`${key.init()}_${tag.init().replace(/\s/gi, '')}`)
+      }
+
         function init() {
             loading(true)
             let inputMyKeywords = document.querySelector('#input-my-prompt-keywords'),
@@ -793,9 +797,7 @@
                 ${Array.from(
                   json[key],
                   v =>
-                    `<div class="tag ${key.init()}_${v
-                      .init()
-                      .replace(/\s/gi, '')}" data-json="${encodeURIComponent(
+                    `<div class="tag ${createTagClassName(key,v)}" data-json="${encodeURIComponent(
                       JSON.stringify({ key, value: v })
                     )}">${v}</div>`
                 ).join('')}
@@ -833,7 +835,10 @@
       <div class="content">
       ` +
         html.join('') +
-        '</div>'
+        '</div>';
+
+
+      
     
       const checkStatus = () => {
         window._prompt_tools_status =
@@ -996,7 +1001,7 @@
     function findTagUI(key,tag){
       // console.log(`.tag .${key.init()}_${tag.init().replace(/\s/gi, '')}`)
       return document.body.querySelector(
-            `.tag.${key.init()}_${tag.init().replace(/\s/gi, '')}`
+            `.tag.${createTagClassName(key,tag)}`
           )
     }
     
@@ -1008,7 +1013,7 @@
     
       let prompt = Array.from([...data], d => {
         if (typeof d == 'object') {
-          //   console.log(d)
+            // console.log(d)
           let element =findTagUI(d.key,d.tag);
           element.classList.add('tag-result')
           element.style.backgroundColor = color
